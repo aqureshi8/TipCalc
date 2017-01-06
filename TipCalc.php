@@ -2,19 +2,51 @@
 <html>
 	<head>
 		<style type="text/css">
+			body {
+				background-color: lightblue;
+			}
+			.tipCalc {
+				background-color: white;
+				width: 300px;
+				border-style: solid;
+				border-color: black;
+				margin-left: auto;
+				margin-right: auto;
+				padding-left: auto;
+				padding-right: auto;
+				padding-bottom: 20px;
+			}
+			h1 {
+				text-align: center;
+≈			}
 			.error {
-				color: brown;
+				color: red;
+				padding-left: 20px;
 			}
 
 			.bill {
+				padding-left: 20px;
+			}
+
+			.AnswerBox {
+				width: 75%;
+				border-style: solid;
+				border-color: black;
+				padding-left: 20px;
+				margin-right: auto;
+				margin-left: auto;
+				margin-top: 20px;
 				color: blue;
+			}
+
+			.submit {
+				text-align: center;
 			}
 		</style>
 	</head>
 	<body>
-
 		<?php
-			$tipPercent= "";
+			$tipPercent= "10";
 			$subtotal= "";
 
 			$firstClick = true;
@@ -54,26 +86,32 @@
 			}
 		?>
 
-		<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
-			<h1>Tip Calculator</h1>
-			<div class="<?php if($billErr) {echo 'error';} else {echo 'bill';} ?>">
-				<p>Bill subtotal: $ <input type="text" name="bill" value="<?php echo $subtotal ?>"></p>
-			</div>
-			<div class="<?php if($tipErr) {echo 'error';} else {echo 'bill';} ?>">
-				<?php for ($i=0; $i < 3; $i++) { 
-					$value = ($i * 5) + 10; ?>
-					<input type="radio" name="tip" value="<?php echo $value; ?>" <?php if(isset($tipPercent) && $tipPercent==$value) { echo "checked"; } ?>><?php echo $value . '%'; ?>
-				<?php } ?>
-			</div>
-			<br>
-			<input type="submit" name="submit" value="Submit">
-
-			<?php
-			if(!($tipErr) && !($billErr) && !($firstClick)) {
-				echo "<p>Tip: $$tip</p>";
-				echo "<p>Total: $$total</p>";
-			}
-			?>
-		</form>
+		<div class="tipCalc">
+			<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
+				<h1>Tip Calculator</h1>
+				<div class="<?php if($billErr) {echo 'error';} else {echo 'bill';} ?>">
+					<p>Bill subtotal: $ <input type="text" name="bill" value="<?php echo $subtotal ?>"></p>
+				</div>
+				<div class="<?php if($tipErr) {echo 'error';} else {echo 'bill';} ?>">
+					<p>Tip Percentage:</p>
+					<?php for ($i=0; $i < 3; $i++) { 
+						$value = ($i * 5) + 10; ?>
+						<input type="radio" name="tip" value="<?php echo $value; ?>" <?php if(isset($tipPercent) && $tipPercent==$value) { echo "checked"; } ?>><?php echo $value . '%'; ?>
+					<?php } ?>
+				</div>
+				<br>
+				<div class="submit">
+					<input type="submit" name="submit" value="Submit">
+				</div>
+				<?php
+				if(!($tipErr) && !($billErr) && !($firstClick)) {
+					echo "<div class='AnswerBox'>";
+					echo "<p>Tip: $$tip</p>";
+					echo "<p>Total: $$total</p>";
+					echo "</div>";
+				}
+				?>
+			</form>
+		</div>
 	</body>
 </html>

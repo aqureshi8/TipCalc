@@ -27,16 +27,29 @@
 					$tipErr = true;
 				}
 				else {
-					$tip = number_format($_POST["tip"] * 0.01 * $_POST["bill"], 2, '.','');
+					$tipPercent = $_POST["tip"];
 				}
 
-				if(empty($_POST["bill"]) || $_POST["bill"] <= 0) {
+				if(empty($_POST["bill"])) {
+					$subtotal="0";
 					$billErr = true;
 				}
 				else {
-					if(!empty($_POST["tip"])) {
-						$total = number_format($tip + $_POST["bill"], 2, '.', '');
+					$subtotal = $_POST["bill"];
+					if(is_numeric($subtotal)) {
+						if($subtotal <= 0) {
+							$billErr = true;
+						}
 					}
+					else {
+						$subtotal = "0";
+						$billErr = true;
+					}
+				}
+
+				if(!$tipErr && !$billErr) {
+					$tip = number_format($tipPercent * 0.01 * $subtotal, 2, '.','');
+					$total = number_format($tip + $subtotal, 2, '.', '');
 				}
 			}
 		?>
@@ -44,15 +57,15 @@
 		<form method="post" action="<?php echo htmlspecialchars($_SERVER["PHP_SELF"]);?>">
 			<h1>Tip Calculator</h1>
 			<div class="<?php if($billErr) {echo 'error';} else {echo 'bill';} ?>">
-				<p>Bill subtotal: $ <input type="text" name="bill"></p>
+				<p>Bill subtotal: $ <input type="text" name="bill" value="<?php echo $subtotal ?>"></p>
 			</div>
 			<div class="<?php if($tipErr) {echo 'error';} else {echo 'bill';} ?>">
 				<?php for ($i=0; $i < 3; $i++) { 
-					$tipPercent = ($i * 5) + 10; ?>
-					<input type="radio" name="tip" value="<?php echo $tipPercent; ?>"><?php echo $tipPercent . '%'; ?>
+					$value = ($i * 5) + 10; ?>
+					<input type="radio" name="tip" value="<?php echo $value; ?>" <?php if(isset($tipPercent) && $tipPercent==$value) { echo "checked"; } ?>><?php echo $value . '%'; ?>
 				<?php } ?>
 			</div>
-			<br><br>
+			<br>
 			<input type="submit" name="submit" value="Submit">
 
 			<?php

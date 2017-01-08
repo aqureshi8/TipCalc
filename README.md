@@ -17,7 +17,7 @@ The following **required** functionality is complete:
 * [x] Submitted form values are retained when errors or results are shown.
 
 The following **optional** features are implemented:
-* [ ] Add support for custom tip percentage
+* [x] Add support for custom tip percentage
 * [ ] Add support for splitting the tip and total
 
 The following **additional** features are implemented:

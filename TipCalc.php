@@ -27,7 +27,9 @@
 			.bill {
 				padding-left: 20px;
 			}
-
+			.tip {
+				width: 50px;
+			}
 			.AnswerBox {
 				width: 75%;
 				border-style: solid;
@@ -48,6 +50,7 @@
 		<?php
 			$tipPercent= "10";
 			$subtotal= "";
+			$customTip="";
 
 			$firstClick = true;
 			$tipErr = false;
@@ -60,6 +63,25 @@
 				}
 				else {
 					$tipPercent = $_POST["tip"];
+					if($tipPercent==="other") {
+						if(empty($_POST["customTip"])) {
+							$customTip = '0';
+							$tipErr = true;
+						}
+						else {
+							$customTip = $_POST["customTip"];
+							if(is_numeric($customTip)) {
+								if($customTip <= 0) {
+									$tipErr = true;
+								}
+							}
+							else {
+								$customTip = '0';
+								$tipErr = true;
+							}
+
+						}
+					}
 				}
 
 				if(empty($_POST["bill"])) {
@@ -80,8 +102,14 @@
 				}
 
 				if(!$tipErr && !$billErr) {
-					$tip = number_format($tipPercent * 0.01 * $subtotal, 2, '.','');
-					$total = number_format($tip + $subtotal, 2, '.', '');
+					if($tipPercent === 'other') {
+						$tip = number_format($customTip * 0.01 * $subtotal, 2, '.','');
+						$total = number_format($tip + $subtotal, 2, '.', '');
+					}
+					else {
+						$tip = number_format($tipPercent * 0.01 * $subtotal, 2, '.','');
+						$total = number_format($tip + $subtotal, 2, '.', '');
+					}
 				}
 			}
 		?>
@@ -96,8 +124,11 @@
 					<p>Tip Percentage:</p>
 					<?php for ($i=0; $i < 3; $i++) { 
 						$value = ($i * 5) + 10; ?>
-						<input type="radio" name="tip" value="<?php echo $value; ?>" <?php if(isset($tipPercent) && $tipPercent==$value) { echo "checked"; } ?>><?php echo $value . '%'; ?>
+						<input id="<?php echo $value; ?>" type="radio" name="tip" value="<?php echo $value; ?>" <?php if(isset($tipPercent) && $tipPercent==$value) { echo "checked"; } ?>><label for="<?php echo $value; ?>"><?php echo ' ' . $value . '%'; ?></label>
 					<?php } ?>
+					<div>
+						<input id="other" type="radio" name="tip" value="other" <?php if(isset($tipPercent) && $tipPercent=="other") { echo "checked"; } ?>><label for='other'><?php echo " Custom: " ?></label><input class="tip" type="text" name="customTip" value="<?php echo $customTip ?>"><?php echo "%" ?>
+					</div>
 				</div>
 				<br>
 				<div class="submit">

@@ -48,65 +48,113 @@
 	</head>
 	<body>
 		<?php
-			$tipPercent= "10";
-			$subtotal= "";
-			$customTip="";
+			$tipPercent= "10"; //Variable to hold the amount of tip to give
+			$subtotal= ""; //Variable to hold bill cost
+			$customTip=""; //Variable that holds custom tip
 
-			$firstClick = true;
-			$tipErr = false;
-			$billErr = false;
+			$firstClick = true; //True if user has not hit submit for first time
+			$tipErr = false; //Bad tip percentage?
+			$billErr = false; //Bad bill cost?
 
+			//Method called by Submit button
 			if($_SERVER["REQUEST_METHOD"] == "POST") {
-				$firstClick = false;
+
+				$firstClick = false; //submit button has been pressed
+
+				//Check if valid value for tipPercent
 				if(empty($_POST["tip"])) {
-					$tipErr = true;
+					//INVALID: the value for tip was empty
+
+					$tipErr = true; //ERROR: tip error
 				}
 				else {
-					$tipPercent = $_POST["tip"];
+					//the value for tip was not empty
+					$tipPercent = $_POST["tip"]; //set value for tip percent
+
+					//check if custom tip percentage
 					if($tipPercent==="other") {
+						//user wants to use custom tip percentage
+						
+						//check if given good custom tip value
 						if(empty($_POST["customTip"])) {
-							$customTip = '0';
-							$tipErr = true;
+							//INVALID: no custom tip value was given
+							
+							$customTip = '0'; //set custom tip to default ('0')
+							$tipErr = true; //ERROR: tip error
 						}
 						else {
-							$customTip = $_POST["customTip"];
+							//custom tip value was given
+
+							$customTip = $_POST["customTip"]; //set value for custom tip
+
+							//check if valid custom tip
+							//check if custom tip is made up of numbers
 							if(is_numeric($customTip)) {
+								//custom tip is a number
+
+								//check if custom tip is greater than 0
 								if($customTip <= 0) {
-									$tipErr = true;
+									//INVALID: custom tip is not greater than 0
+
+									$tipErr = true; //ERROR: tip Error
 								}
 							}
 							else {
-								$customTip = '0';
-								$tipErr = true;
+								//INVALID: custom tip contained characters other than numbers
+
+								$customTip = '0'; //set custom tip to default ('0')
+								$tipErr = true; //ERROR: tip error
 							}
 
 						}
 					}
 				}
 
+				//Check if valid value for subtotal
 				if(empty($_POST["bill"])) {
-					$subtotal="0";
-					$billErr = true;
+					//INVALID: subtotal was empty 
+
+					$subtotal="0"; //set subtotal to default value ('0')
+					$billErr = true; //ERROR: bill error
 				}
 				else {
-					$subtotal = $_POST["bill"];
+					//subtotal recieved a value
+
+					$subtotal = $_POST["bill"]; //set value for subtotal
+
+					//check if subtotal value was valid
 					if(is_numeric($subtotal)) {
+						//subtotal is a number
+
+						//check if subtotal is a number greater than 0
 						if($subtotal <= 0) {
-							$billErr = true;
+							//INVALID: subtotal is not greater than 0
+
+							$billErr = true;//ERROR: bill error
 						}
 					}
 					else {
-						$subtotal = "0";
-						$billErr = true;
+						//INVALID: subtotal contains characters other than numbers
+
+						$subtotal = "0";//set subtotal to default value ('0')
+						$billErr = true;//ERROR: bill error
 					}
 				}
 
+				//Check if any errors
 				if(!$tipErr && !$billErr) {
+					//No Errors
+
+					//check if custom tip selected
 					if($tipPercent === 'other') {
+						//use custom tip
+
 						$tip = number_format($customTip * 0.01 * $subtotal, 2, '.','');
 						$total = number_format($tip + $subtotal, 2, '.', '');
 					}
 					else {
+						//use tip percent
+						
 						$tip = number_format($tipPercent * 0.01 * $subtotal, 2, '.','');
 						$total = number_format($tip + $subtotal, 2, '.', '');
 					}
